@@ -7,9 +7,23 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",
-    "test:e2e": "vue-cli-service test:e2e"
+    "test:e2e": "vue-cli-service test:e2e",
+    "start:micro": "micro-dev src/micro",
+    "now-start": "micro src/micro",
+    "now-deploy": "now --public && now alias"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "cookie": "^0.3.1",
+    "dotenv": "^5.0.1",
+    "element-ui": "^2.3.8",
+    "micro": "^9.3.0",
+    "microrouter": "^3.1.3",
+    "mongodb": "^3.1.0-beta4",
+    "opentype.js": "^0.8.0",
+    "request-promise": "^4.2.2",
+    "sharp": "^0.20.2",
+    "text-to-svg": "^3.1.3",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1"
   },
@@ -23,6 +37,7 @@
     "@vue/test-utils": "^1.0.0-beta.10",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.0.4",
+    "micro-dev": "^2.2.2",
     "vue-template-compiler": "^2.5.13"
   },
   "babel": {
@@ -35,7 +50,15 @@
     "extends": [
       "plugin:vue/essential",
       "@vue/airbnb"
-    ]
+    ],
+    "rules": {
+      "object-curly-newline": [
+        "error",
+        {
+          "consistent": true
+        }
+      ]
+    }
   },
   "postcss": {
     "plugins": {
