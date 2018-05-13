@@ -1,0 +1,21 @@
+{
+  "name": "logo-generator",
+  "alias": "logo-generator",
+  "scale": {
+	  "sfo1": {
+	    "min": 1,
+	    "max": "auto"
+	  }
+	},
+	"env": {
+	  "NODE_ENV": "production"
+	},
+	"files": [
+	  ".env",
+	  "src",
+	  "package.json",
+	  "package-lock.json",
+	  "now.json"
+	],
+	"dotenv": true
+}

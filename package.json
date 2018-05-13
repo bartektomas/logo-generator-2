@@ -9,6 +9,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "start:micro": "micro-dev src/micro",
+    "now-build": "echo You do not need to build any files for backend",
     "now-start": "micro src/micro",
     "now-deploy": "now --public && now alias"
   },
