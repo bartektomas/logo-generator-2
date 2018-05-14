@@ -171,7 +171,7 @@ export default {
 
           fontList.items.slice(0, 50).forEach((fontObject, index) => {
             const fontDefaultVariant = fontObject.variants[0];
-            const fontUrl = fontObject.files[fontDefaultVariant];
+            const fontUrl = fontObject.files[fontDefaultVariant].replace('http', 'https');
 
             TextToSVG.load(fontUrl, (err, textToSVG) => {
               let svg;

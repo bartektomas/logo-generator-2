@@ -1,3 +1,2 @@
-/*    /index.html   200
-/api/*  /.netlify/functions/:splat   200
-/micro-api/*  https://logo-generator.now.sh/:splat   200
+/*            /index.html                           200
+/micro-api/*  https://logo-generator.now.sh/:splat  200
