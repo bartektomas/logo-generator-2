@@ -5,7 +5,7 @@ const axios = require('axios');
 
 // https://www.npmjs.com/package/text-to-svg
 function generateText(fontData, text) {
-  let fontSize = 30;
+  const fontSize = text.length > 5 ? 30 - text.length : 30;
   const attributes = { fill: 'red' };
   const options = { x: 0, y: 0, fontSize, anchor: 'top', attributes };
 
@@ -50,7 +50,7 @@ function generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, sizer) {
 
       <svg width="${svgOptions.contentWidth}px" x="${(svgOptions.imageWidth - svgOptions.contentWidth) / 2}px"
       height="${svgOptions.contentHeight}px" y="${(svgOptions.imageHeight - svgOptions.contentHeight) / 2}px">
-      
+
         <rect fill="#aaa" opacity="0" height="100%" width="100%" />
         
         <svg width="${svgOptions.iconWidth}px" height="${svgOptions.iconHeight}"
@@ -65,8 +65,64 @@ function generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, sizer) {
             <path fill="#000" d="${svgText}"/>
           </g>
         </svg>
+
+      </svg>
+    </svg>
+  `;
+
+  return mySvg;
+}
+
+function generateHorizontalLogo(fontData, text, iconSvgBody, iconViewbox, sizer) {
+  const { svgText, svgTextMetrics } = generateText(fontData, text);
+
+  const textSizer = 2 * sizer;
+  const iconSizer = (150 / iconViewbox.width) * sizer;
+  const textLeft = (150 * sizer) + 20;
+
+  const svgOptions = {
+    imageWidth: 500 * sizer,
+    imageHeight: 500 * sizer,
+
+    iconWidth: 150 * sizer,
+    iconHeight: 150 * sizer,
+
+    textWidth: svgTextMetrics.width * textSizer,
+    textHeight: svgTextMetrics.height * textSizer,
+
+    contentWidth: (svgTextMetrics.width * textSizer) + textLeft,
+    contentHeight: 150 * sizer,
+  };
+
+  const mySvg = `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      version="1.0" x="0px" y="0px" width="${svgOptions.imageWidth}px" height="${svgOptions.imageHeight}px"
+      preserveAspectRatio="xMinYMin meet">
+
+      <rect fill="#eee" opacity="0" height="100%" width="100%" />
+
+      <svg width="${svgOptions.contentWidth}px" x="${(svgOptions.imageWidth - svgOptions.contentWidth) / 2}px"
+      height="${svgOptions.contentHeight}px" y="${(svgOptions.imageHeight - svgOptions.contentHeight) / 2}px">
+      
+        <rect fill="#aaa" opacity="0" height="100%" width="100%" />
         
-      </svg> 
+        <svg height="${svgOptions.iconHeight}" y="${(svgOptions.contentHeight - svgOptions.iconHeight) / 2}px"
+          width="${svgOptions.iconWidth}px" >
+            <g fill="#000"  transform="scale(${iconSizer})">
+              ${iconSvgBody}
+            </g>
+        </svg>
+
+        <svg height="${svgOptions.textHeight}" y="${(svgOptions.contentHeight - svgOptions.textHeight) / 2}px"
+          width="${svgOptions.textWidth}" x="${textLeft}">
+            <g transform="scale(${textSizer})">
+              <path fill="#000" d="${svgText}"/>
+            </g>
+        </svg>
+
+      </svg>
     </svg>
   `;
 
@@ -93,6 +149,7 @@ function generateSvg(fontData, iconSvgRaw, text, sizer) {
   // TODO: Add support for several logotypes (icon/vertical/horizontal)
   const mySvg = {
     verticalLogoSvg: generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, 0.6 * sizer),
+    horizontalLogoSvg: generateHorizontalLogo(fontData, text, iconSvgBody, iconViewbox, 0.6 * sizer),
   };
   return mySvg;
 }
@@ -105,9 +162,15 @@ function generateSvgBase(logoType, iconUrl, fontUrl, text, { sizer = 1 } = {}) {
     encoding: null,
   };
 
+  const iconRequestOptions = {
+    method: 'post',
+    url: '/micro-api/proxy',
+    data: { url: iconUrl },
+  };
+
   return Promise.all([
     request.get(requestOptions),
-    axios.post('/micro-api/proxy', { url: iconUrl })
+    axios(iconRequestOptions),
   ]).then(([fontData, iconSvgResponse]) => {
     const mySvg = generateSvg(fontData, iconSvgResponse.data, text, sizer);
 

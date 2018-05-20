@@ -90,6 +90,7 @@
     <div class="final-logos" v-if="currentStep == 2" v-loading="isLoadingCreatingSvg">
       <div class="final-logos__big-logos">
         <el-card v-html="verticalLogoSvg"></el-card>
+        <el-card v-html="horizontalLogoSvg"></el-card>
       </div>
     </div>
 
@@ -126,6 +127,7 @@ export default {
       currentFont: null,
       currentIcon: null,
       verticalLogoSvg: '',
+      horizontalLogoSvg: '',
 
       fontList: [],
       isLoadingFonts: false,
@@ -147,6 +149,7 @@ export default {
     changeStep(newStep) {
       if (this.currentStep > newStep) {
         this.verticalLogoSvg = '';
+        this.horizontalLogoSvg = '';
         this.currentStep = newStep;
       }
     },
@@ -245,6 +248,7 @@ export default {
         .then((svg) => {
           this.isLoadingCreatingSvg = false;
           this.verticalLogoSvg = svg.verticalLogoSvg;
+          this.horizontalLogoSvg = svg.horizontalLogoSvg;
         })
         .catch((error) => {
           console.log('generateSvg ERROR');
