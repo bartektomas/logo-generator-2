@@ -89,7 +89,7 @@
 
     <div class="final-logos" v-if="currentStep == 2" v-loading="isLoadingCreatingSvg">
       <div class="final-logos__big-logos">
-        <el-card v-html="vericalLogoSvg"></el-card>
+        <el-card v-html="verticalLogoSvg"></el-card>
       </div>
     </div>
 
@@ -125,7 +125,7 @@ export default {
       currentStep: 0,
       currentFont: null,
       currentIcon: null,
-      vericalLogoSvg: '',
+      verticalLogoSvg: '',
 
       fontList: [],
       isLoadingFonts: false,
@@ -146,7 +146,7 @@ export default {
   methods: {
     changeStep(newStep) {
       if (this.currentStep > newStep) {
-        this.vericalLogoSvg = '';
+        this.verticalLogoSvg = '';
         this.currentStep = newStep;
       }
     },
@@ -241,12 +241,13 @@ export default {
     createSvg() {
       this.isLoadingCreatingSvg = true;
 
-      Promise.resolve(generateSvg('all', this.currentIcon.url, this.currentFont.url, this.currentText))
+      generateSvg('all', this.currentIcon.url, this.currentFont.url, this.currentText)
         .then((svg) => {
           this.isLoadingCreatingSvg = false;
-          this.vericalLogoSvg = svg.vertical;
+          this.verticalLogoSvg = svg.verticalLogoSvg;
         })
         .catch((error) => {
+          console.log('generateSvg ERROR');
           console.log(error);
         });
     },

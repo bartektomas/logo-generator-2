@@ -3,7 +3,25 @@ const opentype = require('opentype.js');
 const request = require('request-promise');
 const axios = require('axios');
 
-function generateVerticalLogo(svgText, svgTextMetrics, iconSvgBody, iconViewbox, sizer) {
+// https://www.npmjs.com/package/text-to-svg
+function generateText(fontData, text) {
+  let fontSize = 30;
+  const attributes = { fill: 'red' };
+  const options = { x: 0, y: 0, fontSize, anchor: 'top', attributes };
+
+  // https://stackoverflow.com/a/31394257
+  // res is Buffer https://github.com/request/request-promise/issues/171
+  // eslint-disable-next-line max-len
+  const arrayBufferFont = fontData.buffer.slice(fontData.byteOffset, fontData.byteOffset + fontData.byteLength);
+  const textToSVG = new TextToSVG(opentype.parse(arrayBufferFont));
+  const svgText = textToSVG.getD(text, options);
+  const svgTextMetrics = textToSVG.getMetrics(text, options);
+  return { svgText, svgTextMetrics };
+}
+
+function generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, sizer) {
+  const { svgText, svgTextMetrics } = generateText(fontData, text);
+
   const textSizer = 3 * sizer;
   const iconSizer = (150 / iconViewbox.width) * sizer;
   const textTop = (150 * sizer) + 20;
@@ -55,7 +73,7 @@ function generateVerticalLogo(svgText, svgTextMetrics, iconSvgBody, iconViewbox,
   return mySvg;
 }
 
-function generateSvg(logoType, fontData, iconSvgRaw, text, sizer) {
+function getIconViewbox(iconSvgRaw) {
   const reIconSvgBody = /<svg [^>]+>([^]+)<\/svg>/gm;
   const iconSvgBody = reIconSvgBody.exec(iconSvgRaw)[1];
 
@@ -66,26 +84,16 @@ function generateSvg(logoType, fontData, iconSvgRaw, text, sizer) {
     height: parseFloat(iconViewboxRaw.split(' ')[3]),
   };
 
-  let fontSize = 30;
-  const attributes = { fill: 'red' };
-  const options = { x: 0, y: 0, fontSize, anchor: 'top', attributes };
+  return { iconSvgBody, iconViewbox };
+}
 
-  // https://www.npmjs.com/package/text-to-svg
-  // https://stackoverflow.com/a/31394257
-  // res is Buffer https://github.com/request/request-promise/issues/171
-  // eslint-disable-next-line max-len
-  const arrayBufferFont = fontData.buffer.slice(fontData.byteOffset, fontData.byteOffset + fontData.byteLength);
-  const textToSVG = new TextToSVG(opentype.parse(arrayBufferFont));
-  const svgText = textToSVG.getD(text, options);
-  const svgTextMetrics = textToSVG.getMetrics(text, options);
+function generateSvg(fontData, iconSvgRaw, text, sizer) {
+  const { iconSvgBody, iconViewbox } = getIconViewbox(iconSvgRaw);
 
   // TODO: Add support for several logotypes (icon/vertical/horizontal)
-  let mySvg;
-  if (logoType === 'all') {
-    mySvg = {
-      vertical: generateVerticalLogo(svgText, svgTextMetrics, iconSvgBody, iconViewbox, 0.6),
-    };
-  }
+  const mySvg = {
+    verticalLogoSvg: generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, 0.6 * sizer),
+  };
   return mySvg;
 }
 
@@ -97,19 +105,26 @@ function generateSvgBase(logoType, iconUrl, fontUrl, text, { sizer = 1 } = {}) {
     encoding: null,
   };
 
-  // return Promise.all([
-  //   request.get(requestOptions),
-  //   request.get(iconUrl),
-  // ]).then(([fontData, iconSvg]) => {
+  return Promise.all([
+    request.get(requestOptions),
+    axios.post('/micro-api/proxy', { url: iconUrl })
+  ]).then(([fontData, iconSvgResponse]) => {
+    const mySvg = generateSvg(fontData, iconSvgResponse.data, text, sizer);
+
+    if (logoType === 'all') {
+      return mySvg;
+    }
+    return mySvg[logoType];
+  });
 
   /* eslint-disable arrow-body-style */
-  return request.get(requestOptions)
-    .then((fontData) => {
-      return axios.post('/micro-api/proxy', { url: iconUrl })
-        .then((iconSvgResponse) => {
-          return generateSvg(logoType, fontData, iconSvgResponse.data, text, sizer);
-        });
-    });
+  // return request.get(requestOptions)
+  //   .then((fontData) => {
+  //     return axios.post('/micro-api/proxy', { url: iconUrl })
+  //             .then((iconSvgResponse) => {
+  //               return generateSvg(logoType, fontData, iconSvgResponse.data, text, sizer);
+  //             });
+  //   });
   /* eslint-enable arrow-body-style */
 }
 
