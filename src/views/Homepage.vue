@@ -92,6 +92,12 @@
         <el-card v-html="verticalLogoSvg"></el-card>
         <el-card v-html="horizontalLogoSvg"></el-card>
       </div>
+
+      <div class="final-logos__icons">
+        <div v-html="logoIconSquareSvg"></div>
+        <div v-html="logoIconRoundedSquareSvg"></div>
+        <div v-html="logoIconCircleSvg"></div>
+      </div>
     </div>
 
   </div>
@@ -128,6 +134,9 @@ export default {
       currentIcon: null,
       verticalLogoSvg: '',
       horizontalLogoSvg: '',
+      logoIconSquareSvg: '',
+      logoIconRoundedSquareSvg: '',
+      logoIconCircleSvg: '',
 
       fontList: [],
       isLoadingFonts: false,
@@ -150,6 +159,9 @@ export default {
       if (this.currentStep > newStep) {
         this.verticalLogoSvg = '';
         this.horizontalLogoSvg = '';
+        this.logoIconSquareSvg = '',
+        this.logoIconRoundedSquareSvg = '',
+        this.logoIconCircleSvg = '',
         this.currentStep = newStep;
       }
     },
@@ -249,6 +261,10 @@ export default {
           this.isLoadingCreatingSvg = false;
           this.verticalLogoSvg = svg.verticalLogoSvg;
           this.horizontalLogoSvg = svg.horizontalLogoSvg;
+
+          this.logoIconSquareSvg = svg.logoIconSquareSvg;
+          this.logoIconRoundedSquareSvg = svg.logoIconRoundedSquareSvg;
+          this.logoIconCircleSvg = svg.logoIconCircleSvg;
         })
         .catch((error) => {
           console.log('generateSvg ERROR');
@@ -393,6 +409,18 @@ export default {
 .final-logos__big-logos > div{
   padding: 0;
   max-height: 300px;
+}
+
+.final-logos__icons{
+  background: #000;
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  margin-top: 30px;
+  padding: 20px;
 }
 
 </style>

@@ -31,7 +31,7 @@ function generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, sizer) {
     imageHeight: 500 * sizer,
 
     iconWidth: 150 * sizer,
-    icontHeight: 150 * sizer,
+    iconHeight: 150 * sizer,
 
     textWidth: svgTextMetrics.width * textSizer,
 
@@ -129,6 +129,43 @@ function generateHorizontalLogo(fontData, text, iconSvgBody, iconViewbox, sizer)
   return mySvg;
 }
 
+function generateLogoIcon(logoType, iconSvgBody, iconViewbox, sizer) {
+  const iconSizer = (300 / iconViewbox.width) * sizer;
+
+  const svgOptions = {
+    imageWidth: 500 * sizer,
+    imageHeight: 500 * sizer,
+
+    iconWidth: 300 * sizer,
+    iconHeight: 300 * sizer,
+  };
+
+  const backgrounds = {
+    'logoIconSquareSvg': '<rect fill="#fff" height="100%" width="100%" />',
+    'logoIconRoundedSquareSvg': '<rect fill="#fff" height="100%" width="100%" rx="15" ry="15" />',
+    'logoIconCircleSvg': '<rect fill="#fff" height="100%" width="100%" rx="50%" ry="50%" />',
+  };
+
+  const currentBackground = backgrounds[logoType];
+
+  const mySvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+      version="1.0" x="0px" y="0px" width="${svgOptions.imageWidth}px" height="${svgOptions.imageHeight}px">
+
+        ${currentBackground}
+
+        <svg height="${svgOptions.iconHeight}" y="${(svgOptions.imageHeight - svgOptions.iconHeight) / 2}px"
+          width="${svgOptions.iconWidth}px" x="${(svgOptions.imageWidth - svgOptions.iconWidth) / 2}px">
+            <g fill="#000"  transform="scale(${iconSizer})">
+              ${iconSvgBody}
+            </g>
+        </svg>
+    </svg>
+  `;
+
+  return mySvg;
+}
+
 function getIconViewbox(iconSvgRaw) {
   const reIconSvgBody = /<svg [^>]+>([^]+)<\/svg>/gm;
   const iconSvgBody = reIconSvgBody.exec(iconSvgRaw)[1];
@@ -146,10 +183,13 @@ function getIconViewbox(iconSvgRaw) {
 function generateSvg(fontData, iconSvgRaw, text, sizer) {
   const { iconSvgBody, iconViewbox } = getIconViewbox(iconSvgRaw);
 
-  // TODO: Add support for several logotypes (icon/vertical/horizontal)
   const mySvg = {
     verticalLogoSvg: generateVerticalLogo(fontData, text, iconSvgBody, iconViewbox, 0.6 * sizer),
     horizontalLogoSvg: generateHorizontalLogo(fontData, text, iconSvgBody, iconViewbox, 0.6 * sizer),
+
+    logoIconSquareSvg: generateLogoIcon('logoIconSquareSvg', iconSvgBody, iconViewbox, 0.2 * sizer),
+    logoIconRoundedSquareSvg: generateLogoIcon('logoIconRoundedSquareSvg', iconSvgBody, iconViewbox, 0.2 * sizer),
+    logoIconCircleSvg: generateLogoIcon('logoIconCircleSvg', iconSvgBody, iconViewbox, 0.2 * sizer),
   };
   return mySvg;
 }
