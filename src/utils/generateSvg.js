@@ -141,9 +141,9 @@ function generateLogoIcon(logoType, iconSvgBody, iconViewbox, sizer) {
   };
 
   const backgrounds = {
-    'logoIconSquareSvg': '<rect fill="#fff" height="100%" width="100%" />',
-    'logoIconRoundedSquareSvg': '<rect fill="#fff" height="100%" width="100%" rx="15" ry="15" />',
-    'logoIconCircleSvg': '<rect fill="#fff" height="100%" width="100%" rx="50%" ry="50%" />',
+    logoIconSquareSvg: '<rect fill="#fff" height="100%" width="100%" />',
+    logoIconRoundedSquareSvg: '<rect fill="#fff" height="100%" width="100%" rx="15" ry="15" />',
+    logoIconCircleSvg: '<rect fill="#fff" height="100%" width="100%" rx="50%" ry="50%" />',
   };
 
   const currentBackground = backgrounds[logoType];

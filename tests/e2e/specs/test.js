@@ -7,7 +7,7 @@ module.exports = {
       .url(process.env.VUE_DEV_SERVER_URL)
       .waitForElementVisible('#app', 5000)
       .assert.elementPresent('.container')
-      .assert.containsText('div', 'Select a wordmark')
+      .assert.containsText('.steps > div.is-process', 'Select a wordmark')
       .assert.elementCount('.steps', 1)
       .end();
   },

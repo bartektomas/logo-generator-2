@@ -1,14 +1,6 @@
 <template>
   <div class="container">
 
-    <!--
-      <el-steps :space="500" :active="currentStep" simple align-center>
-        <el-step @click="changeStep(0)" title="Select a wordmark" icon="el-icon-edit"></el-step>
-        <el-step @click="changeStep(1)" title="Select a logomark" icon="el-icon-picture"></el-step>
-        <el-step @click="changeStep(2)" title="Get your logo" icon="el-icon-upload"></el-step>
-      </el-steps>
-    -->
-
     <div class="steps">
       <div :class="stepClassObject(0)" @click="changeStep(0)">
         <i class="el-icon-edit"></i> Select a wordmark
@@ -159,9 +151,9 @@ export default {
       if (this.currentStep > newStep) {
         this.verticalLogoSvg = '';
         this.horizontalLogoSvg = '';
-        this.logoIconSquareSvg = '',
-        this.logoIconRoundedSquareSvg = '',
-        this.logoIconCircleSvg = '',
+        this.logoIconSquareSvg = '';
+        this.logoIconRoundedSquareSvg = '';
+        this.logoIconCircleSvg = '';
         this.currentStep = newStep;
       }
     },
